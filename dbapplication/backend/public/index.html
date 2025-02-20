@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <style>
+        /* Basic styling for the grid layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: darkred;
+        }
+    </style>
+    <script>
+        // Function to add a user to the database
+        function addUser() {
+            const femaleinstem = document.getElementById("femaleinstem").value;
+            const hobby = document.getElementById("hobby").value;
+            const achievement = document.getElementById("achievement").value;
+
+            const data = {
+                femaleinstem: femaleinstem,
+                hobby: hobby,
+                achievement: achievement
+            };
+
+            fetch("http://localhost:3000/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`User Added: ${JSON.stringify(data)}`);
+                fetchUsers();  // Refresh the list of users
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to add user");
+            });
+        }
+
+        // Function to fetch all users from the database
+        function fetchUsers() {
+            fetch("http://localhost:3000/users")
+                .then(response => response.json())
+                .then(data => {
+                    const userTable = document.getElementById("userTable");
+                    userTable.innerHTML = "";  // Clear the table before adding new rows
+
+                    // Append rows to the table for each user
+                    data.forEach(user => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>${user.femaleinstem}</td>
+                            <td>${user.hobby}</td>
+                            <td>${user.achievement}</td>
+                            <td><button onclick="deleteUser(${user.id})">Delete</button></td>
+                        `;
+                        userTable.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Failed to fetch users");
+                });
+        }
+
+        // Function to delete a user by ID
+        function deleteUser(id) {
+            fetch(`http://localhost:3000/users/${id}`, {
+                method: "DELETE",
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`User deleted: ${JSON.stringify(data)}`);
+                fetchUsers();  // Refresh the list of users
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to delete user");
+            });
+        }
+
+        // Fetch users when the page loads
+        window.onload = function() {
+            fetchUsers();
+        };
+    </script>
+</head>
+<body>
+    <h1>User Management</h1>
+
+    <!-- Form to Add User -->
+    <h2>Add User</h2>
+    <form onsubmit="event.preventDefault(); addUser();">
+        <label for="femaleinstem">Female in STEM: </label>
+        <input type="text" id="femaleinstem" required><br><br>
+
+        <label for="hobby">Hobby: </label>
+        <input type="text" id="hobby" required><br><br>
+
+        <label for="achievement">Achievement: </label>
+        <input type="text" id="achievement" required><br><br>
+
+        <button type="submit">Add User</button>
+    </form>
+
+    <hr>
+
+    <!-- Section to View Users in Grid Format -->
+    <h2>View Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Female in STEM</th>
+                <th>Hobby</th>
+                <th>Achievement</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="userTable">
+            <!-- User data will be inserted here dynamically -->
+        </tbody>
+    </table>
+
+</body>
+</html>
