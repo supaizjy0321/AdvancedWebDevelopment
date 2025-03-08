@@ -99,7 +99,7 @@ The backend provides the following REST API endpoints:
 
 ## Authors
 
-- Your Name
+- Jingya Zhao
 
 ## License
 
