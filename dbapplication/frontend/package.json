@@ -18,6 +18,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:unit": "react-scripts test src/tests/UserForm.test.js --watchAll=false",
+    "test:e2e": "npx playwright test",
+    "test:load": "k6 run tests/load.test.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -37,5 +40,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.1"
   }
 }
